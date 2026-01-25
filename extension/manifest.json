@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "Quick Note",
+    "version": "1.0.4",
+  "description": "Simple Quick Note Extension for Chrome from BOSS Sahasawat (BSynth) react",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": ["storage"]
+}
