@@ -1,10 +1,13 @@
 # 📝 Quick Note – Chrome Extension
 
-**Quick Note** is a lightweight Chrome Extension designed for fast note-taking, copying, and temporary text storage — all directly from your browser toolbar.
+**Quick Note** is a simple and lightweight Chrome extension designed for fast note-taking while you browse.
 
-Perfect for developers, writers, or anyone who frequently copies snippets, commands, or short notes throughout the day.
+Open the extension and start typing instantly — perfect for writing short notes, code snippets, TODOs, ideas, or temporary information without switching tabs or losing focus.
 
-<img width="493" height="588" alt="image" src="https://github.com/user-attachments/assets/2d81842e-32c9-4913-856a-a445d3e0b433" />
+All notes are stored locally using Chrome Local Storage, ensuring your data stays on your device.
+No accounts, no cloud sync, no tracking.
+
+![640x400](https://github.com/user-attachments/assets/cb3ed792-d9f3-48d8-a8b8-999d3182ae2b)
 
 ---
 
