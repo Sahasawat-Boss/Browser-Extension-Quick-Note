@@ -77,7 +77,7 @@ function App() {
             <div style={styles.logoIcon}><FiEdit3 size={18} color="white" /></div>
             <h3 style={styles.title}>Quick Note</h3>
           </div>
-          <div style={styles.versionTag}>v1.0.9</div>
+          <div style={styles.versionTag}>v1.1.0</div>
         </header>
 
         {/* Toolbar */}
