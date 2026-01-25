@@ -1,57 +1,45 @@
-# 📝 Quick Note – Save & Copy Instantly
+# 📝 Quick Note – Chrome Extension
 
-A lightweight browser extension for writing, saving, and copying notes instantly — without distractions.
+**Quick Note** is a lightweight Chrome Extension designed for fast note-taking, copying, and temporary text storage — all directly from your browser toolbar.
 
-Perfect for developers, students, and anyone who needs a fast place to jot things down and reuse them anywhere.
+Perfect for developers, writers, or anyone who frequently copies snippets, commands, or short notes throughout the day.
 
 ---
 
 ## ✨ Features
 
-- Write or paste text freely in a clean editor
-- One-click **Save & Copy All**
-- Keyboard shortcut support  
-  **Ctrl / ⌘ + Enter** to save and copy instantly
-- Automatically restores your last note
-- Minimal, distraction-free UI
-- Instant feedback when content is saved and copied
+- ✍️ Write or paste notes instantly
+- 💾 Save notes locally in your browser
+- 📋 One-click **Save & Copy All**
+- ⌨️ Keyboard shortcut support
+  - **Ctrl + Enter** (Windows / Linux)
+  - **⌘ + Enter** (macOS)
+- 🔔 Visual confirmation when content is saved & copied
+- 🧹 Quickly clear notes when no longer needed
+- 🎯 Clean, distraction-free UI
 
 ---
 
-## 🚀 How to Use
+## 🔐 Privacy
 
-1. Open the extension popup
-2. Write or paste anything into the editor
-3. Click **Save & Copy All**  
-   or press **Ctrl / ⌘ + Enter**
-4. Your content is saved and copied to the clipboard instantly
+All notes are stored **locally** in your browser using Chrome storage.  
+No data is sent to any server.
 
 ---
 
-## 🧹 Clear Note
+## 🌐 Platform
 
-- Click the trash icon to delete your note
-- Confirmation is required to prevent accidental loss
-
----
-
-## 🎯 Use Cases
-
-- Temporary code snippets
-- Meeting notes
-- Prompt drafts
-- Quick copy-paste workspace
-- Anything you don’t want to lose between tabs
+This project is a **Chrome Extension** and runs entirely inside the Chrome browser.
 
 ---
 
-## 🔗 Credits
+## 👤 Attribution
 
 Developed by **BSynth**  
-🌐 https://www.bossbsynth.com
+🔗 https://www.bossbsynth.com
 
 ---
 
 ## 📄 License
 
-MIT License
+Free to use for personal productivity.
