@@ -1,11 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-// Import ไอคอนจาก react-icons (ใช้ชุด Feather Icons 'fi' เพราะดู Modern)
-import { FiSave, FiTrash2, FiCopy, FiCheck, FiEdit3 } from 'react-icons/fi';
+import { FiSave, FiTrash2, FiCopy, FiCheck, FiEdit3, FiExternalLink } from 'react-icons/fi';
 
 function App() {
   const [note, setNote] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isCopied, setIsCopied] = useState(false); // State สำหรับปุ่ม Copy
+  const [status, setStatus] = useState<'idle' | 'success'>('idle');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -15,227 +13,293 @@ function App() {
     textareaRef.current?.focus();
   }, []);
 
-  const saveNote = () => {
-    chrome.storage.local.set({ note }, () => {
-      setIsSaving(true);
-      setTimeout(() => setIsSaving(false), 1500);
+  const handleSaveAndCopy = async () => {
+    if (!note) return;
+    chrome.storage.local.set({ note }, async () => {
+      try {
+        await navigator.clipboard.writeText(note);
+        setStatus('success');
+        setTimeout(() => setStatus('idle'), 2000);
+        textareaRef.current?.select();
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
     });
   };
 
   const clearNote = () => {
-    if (note && confirm('Are you sure you want to delete this note entirely?')) {
-      chrome.storage.local.remove('note', () => {
-        setNote('');
-      });
-    }
-  };
-
-  // ฟังก์ชันสำหรับ Copy ข้อความ
-  const handleCopy = async () => {
-    if (!note) return;
-    try {
-      await navigator.clipboard.writeText(note);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy!', err);
+    if (note && confirm('Delete this note?')) {
+      chrome.storage.local.remove('note', () => setNote(''));
     }
   };
 
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
   return (
-    <div style={styles.container}>
-      {/* Header Header */}
-      <header style={styles.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <FiEdit3 size={18} color="#4f46e5" />
-          <h3 style={styles.title}>Quick Note</h3>
-        </div>
-      </header>
+    <>
+      <style>
+        {`
+          body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            overflow: hidden;
+          }
+          .btn-hover {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+          }
+          .btn-hover:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+          }
+          .btn-hover:active {
+            transform: scale(0.95);
+          }
+          .creator-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+          }
+          .creator-link:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+          }
+        `}
+      </style>
 
-      {/* New Toolbar area above textarea */}
-      <div style={styles.toolbar}>
-        <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>Editor</span>
-        <button
-          onClick={handleCopy}
-          style={styles.copyButton}
-          disabled={!note}
-          title="Copy to clipboard"
-        >
-          {isCopied ? <FiCheck size={14} color="#10b981" /> : <FiCopy size={14} />}
-          <span style={{ marginLeft: 4 }}>{isCopied ? 'Copied!' : 'Copy'}</span>
-        </button>
-      </div>
+      <div style={styles.container}>
+        {/* Header */}
+        <header style={styles.header}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={styles.logoIcon}><FiEdit3 size={18} color="white" /></div>
+            <h3 style={styles.title}>Quick Note</h3>
+          </div>
+          <div style={styles.versionTag}>v1.0.9</div>
+        </header>
 
-      {/* Editor Area */}
-      <div style={styles.editorContainer}>
-        <textarea
-          ref={textareaRef}
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="// Type something amazing..."
-          style={styles.textarea}
-          onKeyDown={(e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-              e.preventDefault();
-              saveNote();
-            }
-          }}
-        />
-
-        {isSaving && <div style={styles.saveToast}><FiCheck size={14} /> Saved</div>}
-      </div>
-
-      {/* Footer Buttons */}
-      <div style={styles.footer}>
-        <div style={styles.buttonGroup}>
-          <button onClick={saveNote} style={{ ...styles.button, ...styles.saveBtn }}>
-            <FiSave size={16} />
-            <span>Save Note</span>
-          </button>
+        {/* Toolbar */}
+        <div style={styles.toolbar}>
+          <div />
           <button
-            onClick={clearNote}
-            style={{ ...styles.button, ...styles.clearBtn }}
+            onClick={handleSaveAndCopy}
+            className="btn-hover"
+            style={styles.inlineCopyBtn}
             disabled={!note}
           >
-            <FiTrash2 size={16} />
-            <span>Clear</span>
+            <FiCopy size={13} />
+            <span>Copy All</span>
           </button>
         </div>
-        <div style={styles.shortcutHint}>
-          Pro tip: Press <b>{isMac ? '⌘' : 'Ctrl'} + Enter</b> to save quickly.
+
+        {/* Main Editor */}
+        <div style={styles.editorContainer}>
+          <textarea
+            ref={textareaRef}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="// Write or paste anything here..."
+            style={{
+              ...styles.textarea,
+              borderColor: status === 'success' ? '#10b981' : '#e2e8f0'
+            }}
+            onKeyDown={(e) => {
+              if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                handleSaveAndCopy();
+              }
+            }}
+          />
+
+          {status === 'success' && (
+            <div style={styles.successToast}>
+              <FiCheck size={14} />
+              <span>Saved & Copied!</span>
+            </div>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div style={styles.footer}>
+          <div style={styles.buttonGroup}>
+            <button
+              onClick={handleSaveAndCopy}
+              className="btn-hover"
+              style={{ ...styles.button, ...styles.saveBtn }}
+            >
+              <FiSave size={18} />
+              <span>Save & Copy All</span>
+            </button>
+
+            <button
+              onClick={clearNote}
+              className="btn-hover"
+              style={{ ...styles.button, ...styles.clearBtn }}
+              disabled={!note}
+            >
+              <FiTrash2 size={18} />
+            </button>
+          </div>
+
+          <div style={styles.shortcutHint}>
+            Press <b>{isMac ? '⌘' : 'Ctrl'} + Enter</b> to Save and Copy everything.
+          </div>
+
+          {/* Attribution Link */}
+          <div style={styles.attribution}>
+            Developed by{' '}
+            <a
+              href="https://www.bossbsynth.com"
+              target="_blank"
+              rel="noreferrer"
+              className="creator-link"
+            >
+              BSynth <FiExternalLink size={10} />
+            </a>
+          </div>
+
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-// --- Styles ---
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    // ปรับขนาดให้ใหญ่ขึ้นตามที่ขอ
-    padding: '20px',
-    width: '380px', // กว้างขึ้นจากเดิม 320px
+    padding: '24px',
+    width: '400px',
     backgroundColor: '#ffffff',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", sans-serif',
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
-    // เอา border radius และ shadow ออกเพื่อให้ดูเป็น Native Popup ของ Chrome มากขึ้น (Optional)
-    // borderRadius: '12px',
-    // boxShadow: '0 10px 25px rgba(0,0,0,0.05)',
+    gap: '14px',
+    boxSizing: 'border-box',
   },
   header: {
-    paddingBottom: '12px',
-    borderBottom: '2px solid #f1f5f9',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '4px',
+  },
+  logoIcon: {
+    backgroundColor: '#4f46e5',
+    padding: '6px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     margin: 0,
-    fontSize: '18px',
-    fontWeight: 700,
+    fontSize: '20px',
+    fontWeight: 800,
     color: '#1e293b',
-    letterSpacing: '-0.5px'
   },
-  // Toolbar ใหม่ด้านบน textarea
+  versionTag: {
+    fontSize: '10px',
+    backgroundColor: '#f1f5f9',
+    padding: '2px 8px',
+    borderRadius: '10px',
+    color: '#64748b',
+    fontWeight: 600,
+  },
   toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '-8px', // ดึง textarea ขึ้นมาให้ชิด
-    padding: '0 4px'
+    padding: '0 4px',
   },
-  copyButton: {
+  inlineCopyBtn: {
     display: 'flex',
     alignItems: 'center',
-    background: 'transparent',
+    gap: '4px',
+    background: '#f1f5f9',
     border: 'none',
-    cursor: 'pointer',
+    color: '#4f46e5',
     fontSize: '12px',
-    color: '#64748b',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    transition: 'all 0.2s',
+    fontWeight: 700,
+    cursor: 'pointer',
+    padding: '6px 12px',
+    borderRadius: '8px',
   },
   editorContainer: {
     position: 'relative',
-    width: '100%',
   },
   textarea: {
     width: '100%',
-    minHeight: '180px', // สูงขึ้นนิดหน่อย
-    padding: '16px',
-    borderRadius: '12px',
+    minHeight: '220px',
+    padding: '18px',
+    borderRadius: '18px',
     border: '2px solid #e2e8f0',
-    fontSize: '14px',
+    fontSize: '15px',
     lineHeight: '1.6',
     resize: 'none',
     boxSizing: 'border-box',
-    // ใช้ Font Monospace ที่ดูดีขึ้น
-    fontFamily: '"JetBrains Mono", "Fira Code", Menlo, monospace',
+    fontFamily: '"Fira Code", monospace',
     outline: 'none',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
     backgroundColor: '#f8fafc',
-    color: '#334155'
+    color: '#334155',
+    transition: 'border-color 0.3s ease',
   },
   footer: {
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
-    marginTop: '8px'
   },
   buttonGroup: {
     display: 'flex',
     gap: '10px',
   },
   button: {
-    flex: 1,
-    // จัดเรียงไอคอนกับข้อความให้อยู่ตรงกลาง
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    padding: '10px 16px',
-    borderRadius: '8px',
+    gap: '10px',
+    padding: '14px',
+    borderRadius: '14px',
     border: 'none',
     cursor: 'pointer',
-    fontSize: '14px',
-    fontWeight: 600,
-    transition: 'all 0.2s ease-in-out',
+    fontSize: '15px',
+    fontWeight: 700,
   },
   saveBtn: {
-    backgroundColor: '#4f46e5', // สี Indigo สวยๆ
+    flex: 4,
+    backgroundColor: '#4f46e5',
     color: 'white',
-    boxShadow: '0 2px 4px rgba(79, 70, 229, 0.2)',
+    boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)',
   },
   clearBtn: {
-    // สีแดงตามที่ขอ (Soft Red)
+    flex: 1,
     backgroundColor: '#fee2e2',
-    color: '#b91c1c',
-    // เพิ่ม hover effect ใน inline style อาจจะยากหน่อย ถ้าใช้ CSS class จะง่ายกว่า
-    // แต่สีนี้ก็สื่อถึงความอันตรายได้ดี
+    color: '#ef4444',
   },
   shortcutHint: {
     fontSize: '11px',
     color: '#94a3b8',
     textAlign: 'center',
-    marginTop: '4px'
   },
-  saveToast: {
+  attribution: {
+    fontSize: '10px',
+    color: '#cbd5e1',
+    textAlign: 'center',
+    marginTop: '4px',
+  },
+  successToast: {
     position: 'absolute',
-    bottom: '16px',
-    right: '16px',
-    backgroundColor: 'rgba(16, 185, 129, 0.9)', // Green with transparency
+    top: '12px',
+    right: '12px',
+    backgroundColor: '#10b981',
     color: 'white',
-    padding: '6px 12px',
-    borderRadius: '20px',
+    padding: '6px 14px',
+    borderRadius: '10px',
     fontSize: '12px',
-    fontWeight: '600',
+    fontWeight: 700,
     display: 'flex',
     alignItems: 'center',
-    gap: '4px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    pointerEvents: 'none', // ไม่ให้บังการคลิก textarea
+    gap: '6px',
+    boxShadow: '0 4px 10px rgba(16, 185, 129, 0.2)',
   },
 };
 
