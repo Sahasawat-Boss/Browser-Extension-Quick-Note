@@ -4,6 +4,8 @@
 
 Perfect for developers, writers, or anyone who frequently copies snippets, commands, or short notes throughout the day.
 
+<img width="493" height="588" alt="image" src="https://github.com/user-attachments/assets/2d81842e-32c9-4913-856a-a445d3e0b433" />
+
 ---
 
 ## ✨ Features
