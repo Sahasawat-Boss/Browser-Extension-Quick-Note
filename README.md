@@ -17,7 +17,9 @@ No accounts, no cloud sync, no tracking.
   👉 https://chromewebstore.google.com/detail/quick-note/hnbelenilkmibaacgoihcjmpfdgkdfed
 
 > ℹ️ Microsoft Edge users can install this extension directly from the Chrome Web Store.  
-> Native Microsoft Edge Add-ons support is coming soon.
+
+<img width="966" height="131" alt="image" src="https://github.com/user-attachments/assets/dc4c2467-fcdd-4163-9d9f-99ed97262626" />
+
 
 ---
 
