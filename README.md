@@ -7,7 +7,7 @@ Open the extension and start typing instantly — perfect for writing short note
 All notes are stored locally using browser extension local storage, ensuring your data stays on your device.  
 No accounts, no cloud sync, no tracking.
 
-![640x400](https://github.com/user-attachments/assets/cb3ed792-d9f3-48d8-a8b8-999d3182ae2b)
+<img width="1898" height="888" alt="image" src="https://github.com/user-attachments/assets/337d7278-9210-4546-9c23-18dc61c67f74" />
 
 ---
 
