@@ -7,7 +7,7 @@ Open the extension and start typing instantly — perfect for writing short note
 All notes are stored locally using browser extension local storage, ensuring your data stays on your device.  
 No accounts, no cloud sync, no tracking.
 
-![640x400](https://github.com/user-attachments/assets/cb3ed792-d9f3-48d8-a8b8-999d3182ae2b)
+<img width="1898" height="888" alt="image" src="https://github.com/user-attachments/assets/337d7278-9210-4546-9c23-18dc61c67f74" />
 
 ---
 
@@ -17,7 +17,9 @@ No accounts, no cloud sync, no tracking.
   👉 https://chromewebstore.google.com/detail/quick-note/hnbelenilkmibaacgoihcjmpfdgkdfed
 
 > ℹ️ Microsoft Edge users can install this extension directly from the Chrome Web Store.  
-> Native Microsoft Edge Add-ons support is coming soon.
+
+<img width="966" height="131" alt="image" src="https://github.com/user-attachments/assets/dc4c2467-fcdd-4163-9d9f-99ed97262626" />
+
 
 ---
 
