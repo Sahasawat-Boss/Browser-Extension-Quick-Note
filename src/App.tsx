@@ -87,7 +87,7 @@ function App() {
             <div style={styles.logoIcon}><FiEdit3 size={18} color="white" /></div>
             <h3 style={styles.title}>Quick Note</h3>
           </div>
-          <div style={styles.versionTag}>v1.1.1</div>
+          <div style={styles.versionTag}>v1.1.3</div>
         </header>
 
         {/* Toolbar */}
@@ -110,6 +110,7 @@ function App() {
             ref={textareaRef}
             value={note}
             onChange={(e) => setNote(e.target.value)}
+            placeholder="Paste anything here… Save when ready."
             style={{
               ...styles.textarea,
               borderColor:
