@@ -3,7 +3,7 @@ import { FiSave, FiTrash2, FiCopy, FiCheck, FiEdit3, FiExternalLink } from 'reac
 
 function App() {
   const [note, setNote] = useState('');
-  const [status, setStatus] = useState<'idle' | 'success'>('idle');
+  const [status, setStatus] = useState<'idle' | 'saved' | 'copied'>('idle');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -13,12 +13,22 @@ function App() {
     textareaRef.current?.focus();
   }, []);
 
+  // สำหรับปุ่ม Save เฉยๆ
+  const handleSaveOnly = () => {
+    if (!note) return;
+    chrome.storage.local.set({ note }, () => {
+      setStatus('saved');
+      setTimeout(() => setStatus('idle'), 2000);
+    });
+  };
+
+  // สำหรับปุ่ม Save & Copy All
   const handleSaveAndCopy = async () => {
     if (!note) return;
     chrome.storage.local.set({ note }, async () => {
       try {
         await navigator.clipboard.writeText(note);
-        setStatus('success');
+        setStatus('copied'); // <--- เปลี่ยนเป็น copied
         setTimeout(() => setStatus('idle'), 2000);
         textareaRef.current?.select();
       } catch (err) {
@@ -100,10 +110,11 @@ function App() {
             ref={textareaRef}
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="// Write or paste anything here..."
             style={{
               ...styles.textarea,
-              borderColor: status === 'success' ? '#10b981' : '#e2e8f0'
+              borderColor:
+                status === 'copied' ? '#10b981' :
+                  status === 'saved' ? '#3b82f6' : '#e2e8f0'
             }}
             onKeyDown={(e) => {
               if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -113,10 +124,13 @@ function App() {
             }}
           />
 
-          {status === 'success' && (
-            <div style={styles.successToast}>
+          {status !== 'idle' && (
+            <div style={{
+              ...styles.successToast,
+              backgroundColor: status === 'copied' ? '#10b981' : '#3b82f6' // สีเขียวถ้า Copy, สีฟ้าถ้าแค่ Save
+            }}>
               <FiCheck size={14} />
-              <span>Saved & Copied!</span>
+              <span>{status === 'copied' ? 'Saved & Copied!' : 'Saved!'}</span>
             </div>
           )}
         </div>
@@ -124,13 +138,26 @@ function App() {
         {/* Action Buttons */}
         <div style={styles.footer}>
           <div style={styles.buttonGroup}>
+            {/* ปุ่ม Save เฉยๆ ที่เพิ่มใหม่ */}
+            <button
+              onClick={handleSaveOnly}
+              className="btn-hover"
+              style={{ ...styles.button, ...styles.saveOnlyBtn }}
+              disabled={!note}
+            >
+              <FiSave size={18} />
+              <span>Save</span>
+            </button>
+
+            {/* ปุ่มเดิม (เปลี่ยนชื่อเป็น Copy & Save เพื่อความชัดเจน) */}
             <button
               onClick={handleSaveAndCopy}
               className="btn-hover"
               style={{ ...styles.button, ...styles.saveBtn }}
+              disabled={!note}
             >
-              <FiSave size={18} />
-              <span>Save & Copy All</span>
+              <FiCopy size={18} />
+              <span>Copy & Save</span>
             </button>
 
             <button
@@ -300,6 +327,13 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     gap: '6px',
     boxShadow: '0 4px 10px rgba(16, 185, 129, 0.2)',
+  },
+  // เพิ่มต่อท้ายใน styles object
+  saveOnlyBtn: {
+    flex: 2,
+    backgroundColor: '#f1f5f9',
+    color: '#475569',
+    border: '1px solid #e2e8f0',
   },
 };
 
